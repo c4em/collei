@@ -25,7 +25,7 @@
 <img src="https://files.catbox.moe/dtuhxp.png">
 
 <h3>Copy your cookies</h3>
-Log in at <a href="https://hoyolab.com">hoyolab.com</a>, open the developer console by pressing `F12` on your keyboard and navigate to the console tab. Finally, paste the following in the console to copy your cookies to your clipboard <code>copy(document.cookie)</code>. <br> <br>
+Log in at <a href="https://hoyolab.com">hoyolab.com</a>, open the developer console by pressing <code>F12</code> on your keyboard and navigate to the console tab. Finally, paste the following in the console to copy your cookies to your clipboard <code>copy(document.cookie)</code>. <br> <br>
 <img src="https://files.catbox.moe/te720c.png">
 <b>IMPORTANT: Never share your cookies with anyone!</b>
 
