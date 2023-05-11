@@ -36,7 +36,9 @@ Log in at <a href="https://hoyolab.com">hoyolab.com</a>, open the developer cons
 <h3>Paste your cookies in the repository secret</h3>
 Create a new secret called <code>GENSHIN_COOKIES</code> or <code>STARRAIL_COOKIES</code> respectively and 
 paste your cookies. If both your Star Rail and Genshin accounts are connected to the same Hoyoverse account, paste
-the same cookie in each.
+the same cookie in each. <br>
+If you don't have a Star Rail or Genshin Impact account there is no need to provide the cookie. 
+It will lead to a failed run otherwise. 
 <img src="https://files.catbox.moe/1bvc55.png">
 
 <h3>Give the action write permissions</h3>
