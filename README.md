@@ -46,6 +46,7 @@ You can also run this repository locally if you do not wish to rely on GitHub.
 
 ```bash
 $ git clone https://github.com/c4em/collei
+$ cd collei
 $ pip install -r requirements.txt
 $ GENSHIN_COOKIES="your cookies" STARRAIL_COOKIES="your cookies" ./collei
 ```
