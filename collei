@@ -63,13 +63,12 @@ def extract_active_starrail_codes(soup):
     codes = []
     for tr in soup.find("table").findAll("tr"):
         code = str(tr.find("td"))
-        print(code)
         if code != "None":
             codes.append(code[code.find(">")+1 : code.find("\n</")])
     return codes
 
 async def redeem_starrail():
-    client = genshin.Client(os.environ.get("STARRAIL_COOKIES"), debug=True, game=genshin.Game.STARRAIL)
+    client = genshin.Client(os.environ.get("STARRAIL_COOKIES"), debug=False, game=genshin.Game.STARRAIL)
     print("Claiming daily Star Rail reward")
     try:
         await client.claim_daily_reward()
