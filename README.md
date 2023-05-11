@@ -11,7 +11,8 @@
           <li><a href="#fork-the-repository">Fork the repository</a></li>
           <li><a href="#copy-your-cookies">Copy your cookies</a></li>
           <li><a href="#create-a-repository-secret">Create a repository secret</a></li>
-          <li><a href="#paste-your-cookies-in-the-repository-secret">Paste your cookies in the repository secret</a></li>
+          <li><a href="#paste-your-cookies-in-the-repository-secret">Paste your cookies in the repository secret</a></li>      
+          <li><a href="#give-the-action-write-permissions">Give the action write permissions</a></li>
           <li><a href="#run-the-action-manually">Run the action manually</a></li>
         </ul>
         <li><a href="#running-locally">Running locally</a></li>
@@ -37,6 +38,10 @@ Create a new secret called <code>GENSHIN_COOKIES</code> or <code>STARRAIL_COOKIE
 paste your cookies. If both your Star Rail and Genshin accounts are connected to the same Hoyoverse account, paste
 the same cookie in each.
 <img src="https://files.catbox.moe/1bvc55.png">
+
+<h3>Give the action write permissions</h3>
+<img src="https://files.catbox.moe/4inzc8.png">
+<img src="https://files.catbox.moe/hnovu2.png">
 
 <h3>Run the action manually</h3>
 <img src="https://files.catbox.moe/jyhe5c.png">
