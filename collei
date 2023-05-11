@@ -1,0 +1,80 @@
+#!/usr/bin/python3
+
+import os
+import requests
+import json
+import asyncio
+import sys
+import time
+
+import genshin
+from bs4 import BeautifulSoup
+
+def errprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+def extract_active_codes(soup):
+    codes = []
+    for tr in soup.find("table").findAll("tr"):
+        for td in tr.findAll("td"):
+            code = str(td.find("code"))
+            if code != "None":
+                codes.append(code[code.find('>')+1 : code.find('</')])
+            elif "Expired:" in str(td):
+                return codes
+
+async def redeem_genshin():
+    client = genshin.Client(os.environ.get("GENSHIN_COOKIES"), debug=False, game=genshin.Game.GENSHIN)
+
+    print("Claiming daily reward")
+    try:
+        await client.claim_daily_reward()
+    except genshin.AlreadyClaimed:
+        print("Genshin rewards have already been claimed for the day.")
+    
+    res = requests.get("https://genshin-impact.fandom.com/wiki/Promotional_Code")
+    soup = BeautifulSoup(res.text, "html.parser")
+    active_codes = extract_active_codes(soup)
+
+    if not os.path.exists('genshin_codes.txt'):
+        os.mknod("genshin_codes.txt")
+    with open("genshin_codes.txt", "r") as file:
+        file_codes = file.readlines()
+
+    for code in active_codes:
+        if code+"\n" not in file_codes:
+            print(f"Redeeming code: {code}")
+            try:
+                await client.redeem_code(code)
+            except Exception as e:
+                print(f"Failed to redeem code {code}: '{e}'")
+            finally:
+                file_codes.append(code)
+            time.sleep(6)
+
+    with open("genshin_codes.txt", "w") as file:
+        for code in file_codes:
+            if code[-1] == "\n":
+                file.write("".join(code))
+            else:
+                file.write("".join(code) + "\n")
+
+async def redeem_starrail():
+    # TODO
+    pass
+
+async def main():
+    if os.environ.get("GENSHIN_COOKIES") is None and os.environ.get("STARRAIL_COOKIES") is None:
+        errprint("COOKIES secrets are not set. Please read the setup section in README.md to proceed.")
+        exit(1)
+
+    if os.environ.get("GENSHIN_COOKIES") is not None:
+        await redeem_genshin()
+
+    if os.environ.get("STARRAIL_COOKIES") is not None:
+        await redeem_starrail()
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
+
