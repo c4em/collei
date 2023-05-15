@@ -6,6 +6,7 @@ import json
 import asyncio
 import sys
 import time
+from random import randrange
 
 import genshin
 from bs4 import BeautifulSoup
@@ -69,7 +70,7 @@ def extract_active_starrail_codes(soup):
     return codes
 
 async def redeem_starrail():
-    time.sleep(randrage(5))
+    time.sleep(randrange(5))
     client = genshin.Client(os.environ.get("STARRAIL_COOKIES"), debug=False, game=genshin.Game.STARRAIL)
     print("Claiming daily Star Rail reward")
     try:
@@ -95,7 +96,7 @@ async def redeem_starrail():
                 print(f"Failed to redeem code {code}: '{e}'")
             finally:
                 file_codes.append(code)
-            time.sleep(6+randrage(2))
+            time.sleep(6+randrange(2))
 
     with open("starrail_codes.txt", "w") as file:
         for code in file_codes:
