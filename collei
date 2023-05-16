@@ -11,6 +11,9 @@ from random import randrange
 import genshin
 from bs4 import BeautifulSoup
 
+# TODO: Add some more sites to scrape for codes. The fandom wiki works reliably,
+# unlike some other sites but is on the rather slow side when it comes to adding the new codes.
+
 def errprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
@@ -23,44 +26,6 @@ def extract_active_genshin_codes(soup):
                 codes.append(code[code.find('>')+1 : code.find('</')])
             elif "Expired:" in str(td):
                 return codes
-
-async def redeem_genshin():
-    time.sleep(randrange(5))
-    client = genshin.Client(os.environ.get("GENSHIN_COOKIES"), debug=False, game=genshin.Game.GENSHIN)
-
-    print("Claiming daily Genshin reward")
-    try:
-        await client.claim_daily_reward()
-    except genshin.AlreadyClaimed:
-        print("Genshin rewards have already been claimed for the day.")
-    
-    res = requests.get("https://genshin-impact.fandom.com/wiki/Promotional_Code")
-    soup = BeautifulSoup(res.text, "html.parser")
-    active_codes = extract_active_genshin_codes(soup)
-
-    if not os.path.exists('genshin_codes.txt'):
-        os.mknod("genshin_codes.txt")
-    with open("genshin_codes.txt", "r") as file:
-        file_codes = file.readlines()
-
-    for code in active_codes:
-        if code+"\n" not in file_codes:
-            print(f"Redeeming code: {code}")
-            try:
-                await client.redeem_code(code)
-            except Exception as e:
-                print(f"Failed to redeem Genshin code {code}: '{e}'")
-            finally:
-                file_codes.append(code)
-            time.sleep(6)
-
-    with open("genshin_codes.txt", "w") as file:
-        for code in file_codes:
-            if code[-1] == "\n":
-                file.write("".join(code))
-            else:
-                file.write("".join(code) + "\n")
-
 def extract_active_starrail_codes(soup):
     codes = []
     for tr in soup.find("table").findAll("tr"):
@@ -69,52 +34,95 @@ def extract_active_starrail_codes(soup):
             codes.append(code[code.find(">")+1 : code.find("\n</")])
     return codes
 
-async def redeem_starrail():
-    time.sleep(randrange(5))
-    client = genshin.Client(os.environ.get("STARRAIL_COOKIES"), debug=False, game=genshin.Game.STARRAIL)
-    print("Claiming daily Star Rail reward")
+async def claim_daily(client):
     try:
         await client.claim_daily_reward()
     except genshin.AlreadyClaimed:
-        print("Star Rail rewards have already been claimed for the day")
+        errprint("Daily check-in rewards have already been claimed.")
+    except Exception as e:
+        errprint(f"Could not claim daily rewards: \"{e}\"")
+        return False
+
+def get_codes_from_file(file):
+    if not os.path.exists(file):
+        os.mknod(file)
+    with open(file, "r") as file:
+        return file.readlines()
+
+async def redeem_codes(codes, file_codes, client):
+    new_codes = file_codes
+    for code in codes:
+        if code+"\n" not in file_codes:
+            print(f"Redeeming code: {code}")
+            try:
+                await client.redeem_code(code)
+            except Exception as e:
+                print(f"Could not redeem code {code}: '{e}'")
+            finally:
+                new_codes.append(code)
+            time.sleep(6+randrange(2))
+    return new_codes
+
+def save_codes(codes, file):
+    with open(file, "w") as file:
+        for code in codes:
+            if code[-1] == "\n":
+                file.write("".join(code))
+            else:
+                file.write("".join(code) + "\n")
+
+async def redeem_genshin():
+    time.sleep(randrange(5))
+    client = genshin.Client(os.environ.get("GENSHIN_COOKIES"), debug=False, game=genshin.Game.GENSHIN)
+
+    print("Claiming daily check-in rewards for Genshin Impact")
+    if await claim_daily(client) == False:
+        return False
+    
+    res = requests.get("https://genshin-impact.fandom.com/wiki/Promotional_Code")
+    soup = BeautifulSoup(res.text, "html.parser")
+    active_codes = extract_active_genshin_codes(soup)
+
+    file_codes = get_codes_from_file("genshin_codes.txt")
+    new_codes = await redeem_codes(active_codes, file_codes, client)
+
+    save_codes(file_codes, "genshin_codes.txt")
+
+async def redeem_starrail():
+    time.sleep(randrange(5))
+    client = genshin.Client(os.environ.get("STARRAIL_COOKIES"), debug=False, game=genshin.Game.STARRAIL)
+
+    print("Claiming daily check-in rewards for Honkai Star Rail")
+    if await claim_daily(client) == False:
+        return False
 
     res = requests.get("https://honkai-star-rail.fandom.com/wiki/Redemption_Code")
     soup = BeautifulSoup(res.text, "html.parser")
     active_codes = extract_active_starrail_codes(soup)
 
-    if not os.path.exists("starrail_codes.txt"):
-        os.mknod("starrail_codes.txt")
-    with open("starrail_codes.txt", "r") as file:
-        file_codes = file.readlines()
+    file_codes = get_codes_from_file("starrail_codes.txt")
+    new_codes = await redeem_codes(active_codes, file_codes, client)
 
-    for code in active_codes:
-        if code+"\n" not in file_codes:
-            print(f"Redeeming Star Rail code: {code}")
-            try:
-                await client.redeem_code(code)
-            except Exception as e:
-                print(f"Failed to redeem code {code}: '{e}'")
-            finally:
-                file_codes.append(code)
-            time.sleep(6+randrange(2))
-
-    with open("starrail_codes.txt", "w") as file:
-        for code in file_codes:
-            if code[-1] == "\n":
-                file.write("".join(code))
-            else:
-                file.write("".join(code) + "\n")
+    save_codes(new_codes, "starrail_codes.txt")
 
 async def main():
     if os.environ.get("GENSHIN_COOKIES") is None and os.environ.get("STARRAIL_COOKIES") is None:
         errprint("COOKIES secrets are not set. Please read the setup section in README.md to proceed.")
         exit(1)
 
+    did_fail=False
     if os.environ.get("GENSHIN_COOKIES") is not None:
-        await redeem_genshin()
+        if await redeem_genshin() == False:
+            errprint("Failed at claiming Genshin Impact rewards")
+            did_fail=True
 
     if os.environ.get("STARRAIL_COOKIES") is not None:
-        await redeem_starrail()
+        if await redeem_starrail() == False:
+            errprint("Failed at claiming Honkai Star Rail rewards")
+            did_fail=True
+
+    if did_fail == True:
+        exit(1)
 
 if __name__ == '__main__':
     asyncio.run(main())
