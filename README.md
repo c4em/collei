@@ -15,6 +15,12 @@
           <li><a href="#give-the-action-write-permissions">Give the action write permissions</a></li>
           <li><a href="#run-the-action-manually">Run the action manually</a></li>
         </ul>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <ul>
+          <li><a href="#changed-password">Changed password</a></li>
+          <li><a href="#setting-cookies-for-a-game-account-you-dont-have">Setting cookies for a game account you don't have</a></li>
+          <li><a href="#something-else">Something else</a></li>
+        </ul>
         <li><a href="#running-locally">Running locally</a></li>
         <li><a href="#repository-license">Repository license</a></li>
       </ul>
@@ -60,6 +66,28 @@ $ GENSHIN_COOKIES="your cookies" STARRAIL_COOKIES="your cookies" ./collei
 
 If you wish to automate this process, <a href="https://wiki.gentoo.org/wiki/Cron">read up on cron jobs for your distribution. </a>
 
+<h2>Troubleshooting</h2>
+Help! My Collei broke! <br>
+This section goes over some common reasons why Collei might break.
+<h3>Changed Password</h3>
+If you reset your password, you'll have to set your cookies again because they'll be reset. Simply delete the existing secrets 
+in the repository and follow the step to set your cookies again.
+<h3>Setting cookies for a game account you don't have</h3>
+Collei will fail if you provide her with cookies to a game you don't play. Simply remove the cookie for the
+given game and she'll resume work like usual.
+
+<h3>Something else</h3>
+It could be that the script broke due to an oopsie on my side, in which case I'm sorry. Have a look at the 
+<a href="https://github.com/c4em/collei">original repository</a> to see if there have been any changes. <br><br>
+If there are, the easiest way to fix the issue, if you're not a developer, would be to set up collei again from scratch. <br>
+Why? You might ask. I know it sucks but because GitHub does not allow you to have private forks of a repository,
+which is why this repository is a template. If you do not care that you have to keep the repository public, you can use the 
+fork option in the top right instead.
+<br><br>
+If there are not, you can contact me about the issue by opening an issue in the GitHub repository or sending me a message
+directly somewhere. I'll be glad to help. My contact information is visible on my GitHub profile.
+
 <h2>Repository license</h2>
 This project is licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPLv3</a>. <br>
 <img src="https://www.gnu.org/graphics/gplv3-with-text-136x68.png">
+
