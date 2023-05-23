@@ -8,7 +8,10 @@
       <ul>
         <li><a href="#setup">Setup</a></li>
         <ul>
-          <li><a href="#fork-the-repository">Fork the repository</a></li>
+          <ul>
+            <li><a href="#option-a-fork-the-repository">Option a: Fork the repository</a></li>
+            <li><a href="#option-b-generate-from-template">Option b: Generate from template</a></li>
+          </ul>
           <li><a href="#copy-your-cookies">Copy your cookies</a></li>
           <li><a href="#create-a-repository-secret">Create a repository secret</a></li>
           <li><a href="#paste-your-cookies-in-the-repository-secret">Paste your cookies in the repository secret</a></li>      
@@ -28,7 +31,13 @@
   </tr>
 </table>
 <h2>Setup</h2>
-<h3>Fork the repository</h3>
+First you'll have to make a decision, whether you want to fork Collei or generate your own version from the template. <br> <br>
+Forking the repository has the benefit of being able to apply fixed and updates to your version easily, with the downside of having to 
+have the repository publicly visible in your GitHub profile due to GitHub limitations. <br> <br>
+If you wish to keep the repository private, you'll have to generate it from the template, with the downside of having to apply patches manually.
+<h4>Option a: Fork the repository</h3>
+<img src="https://files.catbox.moe/n75q20.png">
+<h4>Option b: Generate from template</h3>
 <img src="https://files.catbox.moe/dtuhxp.png">
 
 <h3>Copy your cookies</h3>
