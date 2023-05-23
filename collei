@@ -26,6 +26,7 @@ def extract_active_genshin_codes(soup):
                 codes.append(code[code.find('>')+1 : code.find('</')])
             elif "Expired:" in str(td):
                 return codes
+
 def extract_active_starrail_codes(soup):
     codes = []
     for tr in soup.find("table").findAll("tr"):
@@ -106,17 +107,17 @@ async def redeem_starrail():
     save_codes(new_codes, "starrail_codes.txt")
 
 async def main():
-    if os.environ.get("GENSHIN_COOKIES") is None and os.environ.get("STARRAIL_COOKIES") is None:
+    if len(os.environ.get("GENSHIN_COOKIES")) + len(os.environ.get("STARRAIL_COOKIES")) < 0:
         errprint("COOKIES secrets are not set. Please read the setup section in README.md to proceed.")
         exit(1)
 
     did_fail=False
-    if os.environ.get("GENSHIN_COOKIES") is not None:
+    if len(os.environ.get("GENSHIN_COOKIES")) > 0:
         if await redeem_genshin() == False:
             errprint("Failed at claiming Genshin Impact rewards")
             did_fail=True
 
-    if os.environ.get("STARRAIL_COOKIES") is not None:
+    if len(os.environ.get("STARRAIL_COOKIES")) > 0:
         if await redeem_starrail() == False:
             errprint("Failed at claiming Honkai Star Rail rewards")
             did_fail=True
