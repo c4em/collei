@@ -80,9 +80,10 @@ given game and she'll resume work like usual.
 It could be that the script broke due to an oopsie on my side, in which case I'm sorry. Have a look at the 
 <a href="https://github.com/c4em/collei">original repository</a> to see if there have been any changes. <br><br>
 If there are, the easiest way to fix the issue, if you're not a developer, would be to set up collei again from scratch. <br>
-Why? You might ask. I know it sucks but because GitHub does not allow you to have private forks of a repository,
-which is why this repository is a template. If you do not care that you have to keep the repository public, you can use the 
-fork option in the top right instead.
+Why? You might ask. I know it sucks but GitHub doesn't allow you to create private forks, so you would have to have it publicly
+visible on your profile, which would turn away most people. So instead the repository is a public template, which you can set
+to be private after copying it.
+If you do not care that you have to keep the repository public, you can use the fork option in the top right instead.
 <br><br>
 If there are not, you can contact me about the issue by opening an issue in the GitHub repository or sending me a message
 directly somewhere. I'll be glad to help. My contact information is visible on my GitHub profile.
