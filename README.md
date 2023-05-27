@@ -17,11 +17,13 @@
           <li><a href="#paste-your-cookies-in-the-repository-secret">Paste your cookies in the repository secret</a></li>      
           <li><a href="#give-the-action-write-permissions">Give the action write permissions</a></li>
           <li><a href="#run-the-action-manually">Run the action manually</a></li>
+          <li><a href="#using-docker">Using Docker</a></li>
         </ul>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
         <ul>
           <li><a href="#changed-password">Changed password</a></li>
           <li><a href="#setting-cookies-for-a-game-account-you-dont-have">Setting cookies for a game account you don't have</a></li>
+          <li><a href="#cookie_token-missing">cookie_token missing</a></li>
           <li><a href="#something-else">Something else</a></li>
         </ul>
         <li><a href="#running-locally">Running locally</a></li>
@@ -41,7 +43,7 @@ If you wish to keep the repository private, you'll have to generate it from the 
 <img src="https://files.catbox.moe/dtuhxp.png">
 
 <h3>Copy your cookies</h3>
-Log in at <a href="https://hoyolab.com">hoyolab.com</a>, open the developer console by pressing <code>F12</code> on your keyboard and navigate to the console tab. Finally, paste the following in the console to copy your cookies to your clipboard <code>copy(document.cookie)</code>. <br> <br>
+Log in at <a href="https://genshin.hoyoverse.com/en/gift">genshin.hoyolab.com</a>, open the developer console by pressing <code>F12</code> on your keyboard and navigate to the console tab. Finally, paste the following in the console to copy your cookies to your clipboard <code>copy(document.cookie)</code>. <br> <br>
 <img src="https://files.catbox.moe/te720c.png">
 <b>IMPORTANT: Never share your cookies with anyone!</b>
 
@@ -75,6 +77,9 @@ $ GENSHIN_COOKIES="your cookies" STARRAIL_COOKIES="your cookies" ./collei
 
 If you wish to automate this process, <a href="https://wiki.gentoo.org/wiki/Cron">read up on cron jobs for your distribution. </a>
 
+<h2>Using docker</h2>
+<a href="https://github.com/c4em/collei/issues/4">The process is documented here</a> by <a href="https://github.com/SleepingPanda">@SleepyPanda</a>.
+
 <h2>Troubleshooting</h2>
 Help! My Collei broke! <br>
 This section goes over some common reasons why Collei might break.
@@ -84,6 +89,13 @@ in the repository and follow the step to set your cookies again.
 <h3>Setting cookies for a game account you don't have</h3>
 Collei will fail if you provide her with cookies to a game you don't play. Simply remove the cookie for the
 given game and she'll resume work like usual.
+<h3><code>cookie_token</code> missing</h3>
+
+Head over to [genshin.hoyolab.com]("https://genshin.hoyoverse.com/en/gift"), open the developer console using `F12` and switch to the storage tab, from there
+navigate to cookies and select and copy the value of `cookie_token` or `cookie_token_v2`. You will have to append this to the previous cookies you have copied like
+this: `[previous cookie]; cookie_token=[copied value]`. The semicolon is important, don't leave it out. If you copied `cookie_token_v2` set that instead of `cookie_token`.
+
+<img src="https://files.catbox.moe/6aw2ko.png">
 
 <h3>Something else</h3>
 It could be that the script broke due to an oopsie on my side, in which case I'm sorry. Have a look at the 
