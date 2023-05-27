@@ -6,6 +6,7 @@ import json
 import asyncio
 import sys
 import time
+import re
 from random import randrange
 
 import genshin
@@ -58,7 +59,7 @@ async def redeem_codes(codes, file_codes, client):
             try:
                 await client.redeem_code(code)
             except Exception as e:
-                print(f"Could not redeem code {code}: '{e}'")
+                errprint(f"Could not redeem code {code}: '{e}'")
             finally:
                 new_codes.append(code)
             time.sleep(6+randrange(2))
@@ -72,9 +73,9 @@ def save_codes(codes, file):
             else:
                 file.write("".join(code) + "\n")
 
-async def redeem_genshin():
+async def redeem_genshin(cookies):
     time.sleep(randrange(5))
-    client = genshin.Client(os.environ.get("GENSHIN_COOKIES"), debug=False, game=genshin.Game.GENSHIN)
+    client = genshin.Client(cookies, debug=False, game=genshin.Game.GENSHIN)
 
     print("Claiming daily check-in rewards for Genshin Impact")
     if await claim_daily(client) == False:
@@ -89,9 +90,9 @@ async def redeem_genshin():
 
     save_codes(file_codes, "genshin_codes.txt")
 
-async def redeem_starrail():
+async def redeem_starrail(cookies):
     time.sleep(randrange(5))
-    client = genshin.Client(os.environ.get("STARRAIL_COOKIES"), debug=False, game=genshin.Game.STARRAIL)
+    client = genshin.Client(cookies, debug=False, game=genshin.Game.STARRAIL)
 
     print("Claiming daily check-in rewards for Honkai Star Rail")
     if await claim_daily(client) == False:
@@ -106,19 +107,38 @@ async def redeem_starrail():
 
     save_codes(new_codes, "starrail_codes.txt")
 
+def fix_cookies(cookies):
+    if cookies is None or len(str(cookies)) == 0:
+        return "" 
+
+    if "cookie_token" not in cookies:
+        if "cookie_token_v2" not in cookies:
+            errprint("Missing cookie_token, please read the troubleshooting section in the README.md")
+            exit(1)
+
+    if "account_id" not in cookies:
+        account_id = f"account_id={re.findall('ltuid=(.*?);', cookies)[0]}; "
+        mhyuuid_idx = cookies.index("_MHYUUID=")
+        cookies = cookies[:mhyuuid_idx] + account_id + cookies[mhyuuid_idx:]
+
+    return cookies
+
 async def main():
-    if len(os.environ.get("GENSHIN_COOKIES")) + len(os.environ.get("STARRAIL_COOKIES")) < 0:
+    genshin_cookies = fix_cookies(os.environ.get("GENSHIN_COOKIES"))
+    starrail_cookies = fix_cookies(os.environ.get("STARRAIL_COOKIES"))
+
+    if len(genshin_cookies) + len(starrail_cookies) == 0:
         errprint("COOKIES secrets are not set. Please read the setup section in README.md to proceed.")
         exit(1)
 
     did_fail=False
-    if len(os.environ.get("GENSHIN_COOKIES")) > 0:
-        if await redeem_genshin() == False:
+    if len(genshin_cookies) > 0:
+        if await redeem_genshin(genshin_cookies) == False:
             errprint("Failed at claiming Genshin Impact rewards")
             did_fail=True
 
-    if len(os.environ.get("STARRAIL_COOKIES")) > 0:
-        if await redeem_starrail() == False:
+    if len(starrail_cookies) > 0:
+        if await redeem_starrail(starrail_cookies) == False:
             errprint("Failed at claiming Honkai Star Rail rewards")
             did_fail=True
 
