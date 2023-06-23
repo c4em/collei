@@ -64,7 +64,7 @@ async def redeem_codes(codes, file_codes, client):
                 await client.redeem_code(code)
             except genshin.InvalidCookies:
                 errprint("Could not claim codes due to a invalid cookie")
-                return file_codes
+                return None
             except Exception as e:
                 errprint(f"Could not redeem code {code}: '{e}'")
             finally:
@@ -100,6 +100,8 @@ async def redeem_genshin(cookies):
 
         file_codes = get_codes_from_file("genshin_codes.txt")
         new_codes = await redeem_codes(active_codes, file_codes, client)
+        if new_codes is None:
+            return False
 
         save_codes(file_codes, "genshin_codes.txt")
     else:
@@ -125,6 +127,8 @@ async def redeem_starrail(cookies):
 
         file_codes = get_codes_from_file("starrail_codes.txt")
         new_codes = await redeem_codes(active_codes, file_codes, client)
+        if new_codes is None:
+            return False
 
         save_codes(new_codes, "starrail_codes.txt")
     else:
