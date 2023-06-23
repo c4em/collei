@@ -41,6 +41,10 @@ async def claim_daily(client):
         await client.claim_daily_reward()
     except genshin.AlreadyClaimed:
         errprint("Daily check-in rewards have already been claimed.")
+    except genshin.GeetestTriggered:
+        errprint("Geetest triggered during daily reward claim\n\
+Please read: https://github.com/c4em/collei/#geetest-triggered-during-daily-reward-claim")
+        return False
     except Exception as e:
         errprint(f"Could not claim daily rewards: \"{e}\"")
         return False
@@ -58,6 +62,9 @@ async def redeem_codes(codes, file_codes, client):
             print(f"Redeeming code: {code}")
             try:
                 await client.redeem_code(code)
+            except genshin.InvalidCookies:
+                errprint("Could not claim codes due to a invalid cookie")
+                return file_codes
             except Exception as e:
                 errprint(f"Could not redeem code {code}: '{e}'")
             finally:
@@ -77,35 +84,50 @@ async def redeem_genshin(cookies):
     time.sleep(randrange(5))
     client = genshin.Client(cookies, debug=False, game=genshin.Game.GENSHIN)
 
-    print("Claiming daily check-in rewards for Genshin Impact")
-    if await claim_daily(client) == False:
-        return False
-    
-    res = requests.get("https://genshin-impact.fandom.com/wiki/Promotional_Code")
-    soup = BeautifulSoup(res.text, "html.parser")
-    active_codes = extract_active_genshin_codes(soup)
+    skip_daily = os.environ.get("SKIP_DAILY")
+    if skip_daily is not None:
+        print("Skipping daily rewards for Genshin Impact")
+    else: 
+        print("Claiming daily check-in rewards for Genshin Impact")
+        if await claim_daily(client) == False:
+            return False
+    skip_codes = os.environ.get("SKIP_CODES")
+    if skip_codes is not None:
+        print("Skipping codes for Genshin Impact")
+    else:
+        res = requests.get("https://genshin-impact.fandom.com/wiki/Promotional_Code")
+        soup = BeautifulSoup(res.text, "html.parser")
+        active_codes = extract_active_genshin_codes(soup)
 
-    file_codes = get_codes_from_file("genshin_codes.txt")
-    new_codes = await redeem_codes(active_codes, file_codes, client)
+        file_codes = get_codes_from_file("genshin_codes.txt")
+        new_codes = await redeem_codes(active_codes, file_codes, client)
 
-    save_codes(file_codes, "genshin_codes.txt")
+        save_codes(file_codes, "genshin_codes.txt")
 
 async def redeem_starrail(cookies):
     time.sleep(randrange(5))
     client = genshin.Client(cookies, debug=False, game=genshin.Game.STARRAIL)
 
-    print("Claiming daily check-in rewards for Honkai Star Rail")
-    if await claim_daily(client) == False:
-        return False
+    skip_daily = os.environ.get("SKIP_DAILY")
+    if skip_daily is not None:
+        print("Skipping daily rewards for Honkai Star Rail")
+    else:
+        print("Claiming daily check-in rewards for Honkai Star Rail")
+        if await claim_daily(client) == False:
+            return False
 
-    res = requests.get("https://honkai-star-rail.fandom.com/wiki/Redemption_Code")
-    soup = BeautifulSoup(res.text, "html.parser")
-    active_codes = extract_active_starrail_codes(soup)
+    skip_codes = os.environ.get("SKIP_CODES")
+    if skip_codes is not None:
+        print("Skipping codes for Honkai Star Rail")
+    else:
+        res = requests.get("https://honkai-star-rail.fandom.com/wiki/Redemption_Code")
+        soup = BeautifulSoup(res.text, "html.parser")
+        active_codes = extract_active_starrail_codes(soup)
 
-    file_codes = get_codes_from_file("starrail_codes.txt")
-    new_codes = await redeem_codes(active_codes, file_codes, client)
+        file_codes = get_codes_from_file("starrail_codes.txt")
+        new_codes = await redeem_codes(active_codes, file_codes, client)
 
-    save_codes(new_codes, "starrail_codes.txt")
+        save_codes(new_codes, "starrail_codes.txt")
 
 def fix_cookies(cookies):
     if cookies is None or len(str(cookies)) == 0:
