@@ -17,16 +17,17 @@
           <li><a href="#paste-your-cookies-in-the-repository-secret">Paste your cookies in the repository secret</a></li>      
           <li><a href="#give-the-action-write-permissions">Give the action write permissions</a></li>
           <li><a href="#run-the-action-manually">Run the action manually</a></li>
-          <li><a href="#using-docker">Using Docker</a></li>
         </ul>
+        <li><a href="#using-docker">Alternative setup: Using Docker</a></li>
+        <li><a href="#running-locally">Alternative setup: Running locally</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
         <ul>
           <li><a href="#changed-password">Changed password</a></li>
           <li><a href="#setting-cookies-for-a-game-account-you-dont-have">Setting cookies for a game account you don't have</a></li>
           <li><a href="#cookie_token-missing">cookie_token missing</a></li>
+          <li><a href="#geetest-triggered-during-daily-reward-claim">Geetest triggered during daily reward claim</a></li>
           <li><a href="#something-else">Something else</a></li>
         </ul>
-        <li><a href="#running-locally">Running locally</a></li>
         <li><a href="#repository-license">Repository license</a></li>
       </ul>
     </td>
@@ -34,12 +35,13 @@
 </table>
 <h2>Setup</h2>
 First you'll have to make a decision, whether you want to fork Collei or generate your own version from the template. <br> <br>
-Forking the repository has the benefit of being able to apply fixed and updates to your version easily, with the downside of having to 
-have the repository publicly visible in your GitHub profile due to GitHub limitations. <br> <br>
+Forking the repository has the benefit of being able to apply fixes and updates to your version easily, with the downside of having to 
+have the repository publicly visible in your GitHub profile due to GitHub limitations. This is the recommended way if you do not know how to
+manage a git repository.<br> <br>
 If you wish to keep the repository private, you'll have to generate it from the template, with the downside of having to apply patches manually.
-<h4>Option a: Fork the repository</h3>
+<h3>Option a: Fork the repository</h3>
 <img src="https://files.catbox.moe/n75q20.png">
-<h4>Option b: Generate from template</h3>
+<h3>Option b: Generate from template</h3>
 <img src="https://files.catbox.moe/dtuhxp.png">
 
 <h3>Copy your cookies</h3>
@@ -51,11 +53,9 @@ Log in at <a href="https://genshin.hoyoverse.com/en/gift">genshin.hoyolab.com</a
 <img src="https://files.catbox.moe/hfsub8.png">
 
 <h3>Paste your cookies in the repository secret</h3>
-Create a new secret called <code>GENSHIN_COOKIES</code> or <code>STARRAIL_COOKIES</code> respectively and 
-paste your cookies. If both your Star Rail and Genshin accounts are connected to the same Hoyoverse account, paste
-the same cookie in each. <br>
-<b> If you don't have an account for one of the games, skip setting the cookie secret. Collei will only try to
-claim the rewards for games you provide her with and may fail otherwise.</b>
+If you play Genshin Impact, set a secret called <code>GENSHIN_COOKIES</code>, if you play Honkai Star Rail
+set the cookie <code>STARRAIL_COOKIES</code>. You can also set both if you play both. If they are linked to 
+different accounts, that is also fine, just repeat the previous step to obtain the cookie for the other account.
 <img src="https://files.catbox.moe/1bvc55.png">
 
 <h3>Give the action write permissions</h3>
@@ -71,6 +71,8 @@ You can also run this repository locally if you do not wish to rely on GitHub.
 ```bash
 $ git clone https://github.com/c4em/collei
 $ cd collei
+$ python -m venv venv
+$ source ./venv/bin/activate
 $ pip install -r requirements.txt
 $ GENSHIN_COOKIES="your cookies" STARRAIL_COOKIES="your cookies" ./collei
 ```
@@ -84,32 +86,40 @@ If you wish to automate this process, <a href="https://wiki.gentoo.org/wiki/Cron
 Help! My Collei broke! <br>
 This section goes over some common reasons why Collei might break.
 <h3>Changed Password</h3>
-If you reset your password, you'll have to set your cookies again because they'll be reset. Simply delete the existing secrets 
-in the repository and follow the step to set your cookies again.
+If you reset your password for any reason, you will have to set the secrets again, as the previous cookies will be invalidated.
+Simply delete the existing secret and follow the prior steps again to resolve the issue.
+
 <h3>Setting cookies for a game account you don't have</h3>
 Collei will fail if you provide her with cookies to a game you don't play. Simply remove the cookie for the
 given game and she'll resume work like usual.
 <h3><code>cookie_token</code> missing</h3>
 
-Head over to [genshin.hoyolab.com]("https://genshin.hoyoverse.com/en/gift"), open the developer console using `F12` and switch to the storage tab, from there
+Head over to <a href="https://genshin.hoyoverse.com/en/gift">genshin.hoyolab.com</a>, open the developer console using `F12` and switch to the storage tab, from there
 navigate to cookies and select and copy the value of `cookie_token` or `cookie_token_v2`. You will have to append this to the previous cookies you have copied like
 this: `[previous cookie]; cookie_token=[copied value]`. The semicolon is important, don't leave it out. If you copied `cookie_token_v2` set that instead of `cookie_token`.
 
 <img src="https://files.catbox.moe/6aw2ko.png">
 
+<h3>Geetest triggered during daily reward claim</h3>
+This means that your account might have been flagged for automated claiming of rewards, which will result in you
+having to complete a captcha to claim the reward. Sometimes just running Collei again will resolve the issue.
+If the issue does not go away, it might be useful to try and  <a href="https://docs.github.com/en/actions/using-workflows/disabling-and-enabling-a-workflow">disable Collei</a> 
+for a week or so and claim the rewards manually while solving captchas and then cycle Collei back on.
+
 <h3>Something else</h3>
 It could be that the script broke due to an oopsie on my side, in which case I'm sorry. Have a look at the 
 <a href="https://github.com/c4em/collei">original repository</a> to see if there have been any changes. <br><br>
-If there are, the easiest way to fix the issue, if you're not a developer, would be to set up collei again from scratch. <br>
-Why? You might ask. I know it sucks but GitHub doesn't allow you to create private forks, so you would have to have it publicly
-visible on your profile, which would turn away most people. So instead the repository is a public template, which you can set
-to be private after copying it.
-If you do not care that you have to keep the repository public, you can use the fork option in the top right instead.
+If there have been any changes and you've forked the repository, you can simply head over to your fork, above the file browser
+there should be a message stating that your version is behind by X commits, click on that text, then on the top right it will
+say "merge", press that and follow the trail of green buttons to get it automatically applied.
 <br><br>
-If there are not, you can contact me about the issue by opening an issue in the GitHub repository or sending me a message
-directly somewhere. I'll be glad to help. My contact information is visible on my GitHub profile.
+If you generated your repository from the template and you do not know your way around git, the simplest way to update your
+version of Collei would be to set it up again, if you do know your way around git, simply generate a patch file from the 
+latest changes and apply them to your version.
+<br><br>
+If there are no changes, open an issue on this repository detailing your issue and I will look in to it.
 
 <h2>Repository license</h2>
-This project is licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPLv3</a>. <br>
+This project is licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPLv3</a>. <br><br>
 <img src="https://www.gnu.org/graphics/gplv3-with-text-136x68.png">
 
