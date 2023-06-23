@@ -85,16 +85,15 @@ async def redeem_genshin(cookies):
     client = genshin.Client(cookies, debug=False, game=genshin.Game.GENSHIN)
 
     skip_daily = os.environ.get("SKIP_DAILY")
-    if skip_daily is not None:
-        print("Skipping daily rewards for Genshin Impact")
-    else: 
+    if skip_daily is None or len(str(skip_daily)) == 0:
         print("Claiming daily check-in rewards for Genshin Impact")
         if await claim_daily(client) == False:
             return False
+    else: 
+        print("Skipping daily rewards for Genshin Impact")
+
     skip_codes = os.environ.get("SKIP_CODES")
-    if skip_codes is not None:
-        print("Skipping codes for Genshin Impact")
-    else:
+    if skip_codes is None or len(str(skip_codes)) == 0:
         res = requests.get("https://genshin-impact.fandom.com/wiki/Promotional_Code")
         soup = BeautifulSoup(res.text, "html.parser")
         active_codes = extract_active_genshin_codes(soup)
@@ -103,23 +102,23 @@ async def redeem_genshin(cookies):
         new_codes = await redeem_codes(active_codes, file_codes, client)
 
         save_codes(file_codes, "genshin_codes.txt")
+    else:
+        print("Skipping codes for Genshin Impact")
 
 async def redeem_starrail(cookies):
     time.sleep(randrange(5))
     client = genshin.Client(cookies, debug=False, game=genshin.Game.STARRAIL)
 
     skip_daily = os.environ.get("SKIP_DAILY")
-    if skip_daily is not None:
-        print("Skipping daily rewards for Honkai Star Rail")
-    else:
+    if skip_daily is None or len(str(skip_daily)) == 0:
         print("Claiming daily check-in rewards for Honkai Star Rail")
         if await claim_daily(client) == False:
             return False
+    else:
+        print("Skipping daily rewards for Honkai Star Rail")
 
     skip_codes = os.environ.get("SKIP_CODES")
-    if skip_codes is not None:
-        print("Skipping codes for Honkai Star Rail")
-    else:
+    if skip_codes is None or len(str(skip_daily)) == 0:
         res = requests.get("https://honkai-star-rail.fandom.com/wiki/Redemption_Code")
         soup = BeautifulSoup(res.text, "html.parser")
         active_codes = extract_active_starrail_codes(soup)
@@ -128,6 +127,8 @@ async def redeem_starrail(cookies):
         new_codes = await redeem_codes(active_codes, file_codes, client)
 
         save_codes(new_codes, "starrail_codes.txt")
+    else:
+        print("Skipping codes for Honkai Star Rail")
 
 def fix_cookies(cookies):
     if cookies is None or len(str(cookies)) == 0:

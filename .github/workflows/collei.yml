@@ -24,6 +24,8 @@ jobs:
         env: 
           GENSHIN_COOKIES: ${{ secrets.GENSHIN_COOKIES }}
           STARRAIL_COOKIES: ${{ secrets.STARRAIL_COOKIES }}
+          SKIP_DAILY: ${{ vars.SKIP_DAILY }}
+          SKIP_CODES: ${{ vars.SKIP_CODES }}
         run: python3 collei
       
       - name: Update git repository
