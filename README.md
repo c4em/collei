@@ -20,6 +20,8 @@
         </ul>
         <li><a href="#using-docker">Alternative setup: Using Docker</a></li>
         <li><a href="#running-locally">Alternative setup: Running locally</a></li>
+        <li><a href="#skip-daily-check-in">Skip daily check-in</a></li>
+        <li><a href="#skip-claiming-codes">Skip claiming codes</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
         <ul>
           <li><a href="#changed-password">Changed password</a></li>
@@ -82,6 +84,10 @@ If you wish to automate this process, <a href="https://wiki.gentoo.org/wiki/Cron
 <h2>Using docker</h2>
 <a href="https://github.com/c4em/collei/issues/4">The process is documented here</a> by <a href="https://github.com/SleepingPanda">@SleepyPanda</a>.
 
+<h2>Skip daily check-in</h2>
+If you wish to skip the daily check-in due to issues like the Geetest captcha, simply <a href="https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository">create a new configuration variable</a> called `SKIP_DAILY` and assign it any value.
+<h2>Skip claiming codes</h2>
+If you wish to skip claiming codes, simply <a href="https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository">create a new configuration variable</a> called `SKIP_CODES` and assign it any value.
 <h2>Troubleshooting</h2>
 Help! My Collei broke! <br>
 This section goes over some common reasons why Collei might break.
@@ -101,6 +107,7 @@ this: `[previous cookie]; cookie_token=[copied value]`. The semicolon is importa
 <img src="https://files.catbox.moe/6aw2ko.png">
 
 <h3>Geetest triggered during daily reward claim</h3>
+If you don't care about the daily check-in and just want Collei to claim codes you can avoid this issue entirely by <a href="#skip-daily-check-in">skipping daily check-in</a>.
 This means that your account might have been flagged for automated claiming of rewards, which will result in you
 having to complete a captcha to claim the reward. Sometimes just running Collei again will resolve the issue.
 If the issue does not go away, it might be useful to try and  <a href="https://docs.github.com/en/actions/using-workflows/disabling-and-enabling-a-workflow">disable Collei</a> 
